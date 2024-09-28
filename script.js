@@ -29,4 +29,22 @@ const board = (function (){
             gameBoard[i].push(cell);
         }
     }
+
+    const printBoard = () => {
+        const printedBoard = gameBoard.map(row => row.map(colCell => colCell.getValue()));
+        console.log(printedBoard);
+    }
+
+    const dropToken = (row, column, player) => {
+        const colCell = gameBoard[row][column];
+
+        if (colCell.getValue() === 'X' || colCell.getValue() === 'O') {
+            return;
+        } else colCell.addToken(player);
+    }
+
+    return {
+        printBoard,
+        dropToken
+    };
 })();
