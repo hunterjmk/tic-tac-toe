@@ -5,7 +5,7 @@ Primary focus is to play this in the console for now. So, I'll be writing with t
 Using an IIFE because I only need the board one!
 */
 
-const cell = (function(){
+function Cell() {
     let value = 0;
 
     const addToken = (player) => {
@@ -15,7 +15,7 @@ const cell = (function(){
     const getValue = () => value;
 
     return {addToken, getValue};
-})();
+};
 
 const board = (function (){
     const rows = 3;
@@ -26,25 +26,68 @@ const board = (function (){
     for (let i = 0; i < rows; i++){
         gameBoard[i] = [];
         for (let j = 0; j < columns; j++){
-            gameBoard[i].push(cell);
+            gameBoard[i].push(Cell());
         }
     }
 
     const printBoard = () => {
-        const printedBoard = gameBoard.map(row => row.map(colCell => colCell.getValue()));
+        const printedBoard = gameBoard.map(row => row.map(cell => cell.getValue()));
         console.log(printedBoard);
     }
 
     const dropToken = (row, column, player) => {
-        const colCell = gameBoard[row][column];
+        const cell = gameBoard[row][column];
 
-        if (colCell.getValue() === 'X' || colCell.getValue() === 'O') {
+        if (cell.getValue() === 'X' || cell.getValue() === 'O') {
             return;
-        } else colCell.addToken(player);
+        } else cell.addToken(player);
     }
 
     return {
         printBoard,
         dropToken
     };
+})();
+
+const game = (function (playerOneName = 'Player One', playerTwoName = 'Player Two'){
+
+    const player = [
+        {
+            playerName: playerOneName,
+            token: 'X'
+        },
+        {
+            playerName: playerTwoName,
+            token: 'O'
+        }
+    ]
+
+    let activePlayer = player[0];
+
+    const switchPlayerTurn = () => {
+        activePlayer = (activePlayer === player[0]) ? player[1] : player[0];
+    };
+
+    const printNewRound = () => {
+        console.log(`It's ${activePlayer.playerName}'s turn`);
+
+        board.printBoard();
+    };
+
+    printNewRound();
+
+    const playRound = (row, column) => {
+        console.log(`Placing ${activePlayer.playerName}'s token in row: ${row}, column: ${column}...`);
+
+        board.dropToken(row, column, activePlayer.token);
+
+        switchPlayerTurn();
+        printNewRound();
+    };
+
+
+    return {
+        printNewRound,
+        playRound
+    }
 })();
