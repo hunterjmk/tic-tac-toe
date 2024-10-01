@@ -30,6 +30,8 @@ const board = (function (){
         }
     }
 
+    const getboard = () => gameBoard;
+
     const printBoard = () => {
         const printedBoard = gameBoard.map(row => row.map(cell => cell.getValue()));
         console.log(printedBoard);
@@ -45,7 +47,8 @@ const board = (function (){
 
     return {
         printBoard,
-        dropToken
+        dropToken,
+        getboard
     };
 })();
 
@@ -53,11 +56,11 @@ const game = (function (playerOneName = 'Player One', playerTwoName = 'Player Tw
 
     const player = [
         {
-            playerName: playerOneName,
+            name: playerOneName,
             token: 'X'
         },
         {
-            playerName: playerTwoName,
+            name: playerTwoName,
             token: 'O'
         }
     ]
@@ -69,7 +72,7 @@ const game = (function (playerOneName = 'Player One', playerTwoName = 'Player Tw
     };
 
     const printNewRound = () => {
-        console.log(`It's ${activePlayer.playerName}'s turn`);
+        console.log(`It's ${activePlayer.name}'s turn`);
 
         board.printBoard();
     };
@@ -77,13 +80,75 @@ const game = (function (playerOneName = 'Player One', playerTwoName = 'Player Tw
     printNewRound();
 
     const playRound = (row, column) => {
-        console.log(`Placing ${activePlayer.playerName}'s token in row: ${row}, column: ${column}...`);
+        console.log(`Placing ${activePlayer.name}'s token in row: ${row}, column: ${column}...`);
 
         board.dropToken(row, column, activePlayer.token);
 
+        checkWinner();
         switchPlayerTurn();
         printNewRound();
     };
+
+    const checkWinner = () => {
+        const boardCheck = board.getboard();
+       // columns
+
+       for (let i = 0; i < 3; i++) {  // i = 1
+            const cell1 = boardCheck[0][i].getValue();
+            const cell2 = boardCheck[1][i].getValue();
+            const cell3 = boardCheck[2][i].getValue();
+
+            if (cell1 !== 0 && cell1 === cell2 && cell1 === cell3){
+                console.log(`${activePlayer.name} won! Congratulations`)
+            }
+       }
+        // Rows
+
+        for (let i = 0; i < 3; i++) {  // i = 1
+            const cell1 = boardCheck[i][0].getValue();
+            const cell2 = boardCheck[i][1].getValue();
+            const cell3 = boardCheck[i][2].getValue();
+
+            if (cell1 !== 0 && cell1 === cell2 && cell1 === cell3){
+               console.log(`${activePlayer.name} won! Congratulations`);
+            } 
+       }
+
+       // Diagonals 
+
+       /* 
+        board = [
+        [0, 1, 2], this is row 1 = 0
+        [0, 1, 2], row 2 = 1
+        [0, 1, 2]  row 3 = 2
+        ]
+        */ 
+
+        if ((boardCheck[0][0].getValue() !== 0) && (boardCheck[0][0].getValue() === boardCheck[1][1].getValue()) && (boardCheck[0][0].getValue() === boardCheck[2][2].getValue())) {
+            console.log(`${activePlayer.name} won! Congratulations`);
+        }
+
+        if (boardCheck[0][2].getValue() !== 0 && boardCheck[0][2].getValue() === boardCheck[1][1].getValue() && boardCheck[0][2].getValue() === boardCheck[2][0].getValue()) {
+            console.log(`${activePlayer.name} won! Congratulations`);
+        }
+
+        // Tie
+        let numCells = 0;
+        const totalCells = 9; 
+
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                const cellValue = boardCheck[i][j].getValue();
+                if (cellValue === 'X' || cellValue === 'O') {
+                    numCells++;
+                }
+            }
+        }
+
+        if (numCells === totalCells) {
+            console.log(`It's a tie!`);
+        }
+    }
 
 
     return {
