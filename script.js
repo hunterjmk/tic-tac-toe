@@ -18,19 +18,29 @@ function Cell() {
 };
 
 const board = (function (){
-    const rows = 3;
-    const columns = rows;
 
-    const gameBoard = [];
+    const createBoard = () => {
+        const rows = 3;
+        const columns = rows;
 
-    for (let i = 0; i < rows; i++){
-        gameBoard[i] = [];
-        for (let j = 0; j < columns; j++){
-            gameBoard[i].push(Cell());
+            const createdBoard = [];
+
+        for (let i = 0; i < rows; i++){
+            createdBoard[i] = [];
+            for (let j = 0; j < columns; j++){
+                createdBoard[i].push(Cell());
+            }
         }
+        restart = false;
+
+        return createdBoard;  
     }
 
+    let gameBoard = createBoard();
+    
     const getboard = () => gameBoard;
+
+    const setBoard = (board) => gameBoard = board;
 
     const printBoard = () => {
         const printedBoard = gameBoard.map(row => row.map(cell => cell.getValue()));
@@ -48,9 +58,14 @@ const board = (function (){
     return {
         printBoard,
         dropToken,
-        getboard
+        getboard,
+        createBoard,
+        setBoard
     };
 })();
+
+
+// Game Object
 
 const game = (function (playerOneName = 'Player One', playerTwoName = 'Player Two'){
 
@@ -66,6 +81,7 @@ const game = (function (playerOneName = 'Player One', playerTwoName = 'Player Tw
     ]
 
     let activePlayer = player[0];
+    let endGame = false;
 
     const switchPlayerTurn = () => {
         activePlayer = (activePlayer === player[0]) ? player[1] : player[0];
@@ -73,7 +89,6 @@ const game = (function (playerOneName = 'Player One', playerTwoName = 'Player Tw
 
     const printNewRound = () => {
         console.log(`It's ${activePlayer.name}'s turn`);
-
         board.printBoard();
     };
 
@@ -85,8 +100,19 @@ const game = (function (playerOneName = 'Player One', playerTwoName = 'Player Tw
         board.dropToken(row, column, activePlayer.token);
 
         checkWinner();
-        switchPlayerTurn();
-        printNewRound();
+        if (!endGame) {
+            switchPlayerTurn();
+            printNewRound();
+        } else if (endGame) {
+            board.printBoard();
+
+            const newBoard = board.createBoard();
+            board.setBoard(newBoard);
+
+            endGame = false;
+            activePlayer = player[0];
+            printNewRound();
+        }
     };
 
     const checkWinner = () => {
@@ -100,6 +126,7 @@ const game = (function (playerOneName = 'Player One', playerTwoName = 'Player Tw
 
             if (cell1 !== 0 && cell1 === cell2 && cell1 === cell3){
                 console.log(`${activePlayer.name} won! Congratulations`)
+                endGame = true;
             }
        }
         // Rows
@@ -111,6 +138,7 @@ const game = (function (playerOneName = 'Player One', playerTwoName = 'Player Tw
 
             if (cell1 !== 0 && cell1 === cell2 && cell1 === cell3){
                console.log(`${activePlayer.name} won! Congratulations`);
+               endGame = true;
             } 
        }
 
@@ -126,10 +154,12 @@ const game = (function (playerOneName = 'Player One', playerTwoName = 'Player Tw
 
         if ((boardCheck[0][0].getValue() !== 0) && (boardCheck[0][0].getValue() === boardCheck[1][1].getValue()) && (boardCheck[0][0].getValue() === boardCheck[2][2].getValue())) {
             console.log(`${activePlayer.name} won! Congratulations`);
+            endGame = true;
         }
 
         if (boardCheck[0][2].getValue() !== 0 && boardCheck[0][2].getValue() === boardCheck[1][1].getValue() && boardCheck[0][2].getValue() === boardCheck[2][0].getValue()) {
             console.log(`${activePlayer.name} won! Congratulations`);
+            endGame = true;
         }
 
         // Tie
@@ -147,6 +177,7 @@ const game = (function (playerOneName = 'Player One', playerTwoName = 'Player Tw
 
         if (numCells === totalCells) {
             console.log(`It's a tie!`);
+            endGame = true;
         }
     }
 
