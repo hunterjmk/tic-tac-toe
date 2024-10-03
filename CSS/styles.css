@@ -10,18 +10,43 @@ html {
     padding: 2rem;
 }
 
+body {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+
 h1 {
     color: red;
-    font-size: 5rem;
+    font-size: 10rem;
+    font-weight: 900;
     text-align: center;
     margin-bottom: 2rem;
-    margin-top: 0;
+    margin: 10rem 0 5rem 0;
+}
+
+.flex {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+label,
+input {
+    font-size: 3rem;
+}
+
+input {
+    padding: 1rem;
+    border-radius: 5px;
+    outline: 0;
+    border: 1px solid black;
+    margin: 0.5rem 0 3rem 0;
 }
 
 .turn {
     font-size: 3rem;
     font-weight: 500;
-    margin-bottom: 2rem;
+    margin: 10rem 0 2rem 0;
 }
 
 .board {
@@ -36,15 +61,15 @@ h1 {
 }
 
 .cell {
-    border-collapse: collapse;
     font-size: 10rem;
     background: #fff;
     border: 1px solid black;
 }
 
-.restart {
+.start {
     font-size: 2.5rem;
     padding: 2rem 8rem;
+    margin: 2rem 0;
     border: 0;
     border-radius: 10px;
     background: skyblue;

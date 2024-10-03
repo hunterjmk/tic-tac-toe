@@ -9,17 +9,30 @@
     <link rel="stylesheet" href="./CSS/styles.css">
 </head>
 <body>
-    <h1>Tic Tac Toe</h1>
+    <section>
+        <h1>Tic <br>Tac <br>Toe</h1>
+        <form action="#" class="flex" id="form">
+            <div>
+                <label for="playerone">Player 1</label><br>
+                <input type="text" name="playerOne" id="playerone" required>
+            </div> <br>
+            <div>
+                <label for="playertwo">Player 2</label><br>
+                <input type="text" name="playerTwo" id="playertwo" required>
+            </div>
+            <button type="submit" class="start">Start</button>
+        </form>
+    </section>
 
-    <div class="turn">
-
-    </div>
-
-    <div class="board">
+    <section class="flex">
+        <div class="turn">
+        </div>
+        <div class="board">
         
-    </div>
-    <br>
-    <button class="restart">Restart</button>
+        </div>
+        <br>
+        <button class="restart start">Restart</button>
+    </section>
 
     <script src="script.js"></script>
 </body>

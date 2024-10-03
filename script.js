@@ -85,6 +85,7 @@ const game = (function (playerOneName = 'Player One', playerTwoName = 'Player Tw
     let endGame = false;
 
     const getActivePlayer = () => activePlayer;
+    const getPlayers = () => player;
 
     const switchPlayerTurn = () => {
         activePlayer = (activePlayer === player[0]) ? player[1] : player[0];
@@ -185,7 +186,6 @@ const game = (function (playerOneName = 'Player One', playerTwoName = 'Player Tw
             endGame = false;
         }
         activePlayer = player[0];
-        printNewRound();
     };
 
 
@@ -193,7 +193,8 @@ const game = (function (playerOneName = 'Player One', playerTwoName = 'Player Tw
         printNewRound,
         playRound,
         getActivePlayer,
-        restart
+        restart,
+        getPlayers
     }
 })();
 
@@ -202,6 +203,11 @@ function screenController() {
     const boardDiv = document.querySelector('.board');
     const turnDiv = document.querySelector('.turn');
     const restartBtn = document.querySelector('.restart');
+    const form = document.querySelector('#form');
+    const inputs = document.querySelectorAll('input');
+
+    let namesObj = {};
+    let submittedNames = false;
 
     const updateScreen = () => {
         boardDiv.textContent = '';
@@ -242,10 +248,38 @@ function screenController() {
         
     };
 
+    form.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+
+    namesObj = Object.fromEntries(formData);
+
+    // Change Player names
+
+    const players = game.getPlayers();
+
+    console.log(players);
+
+    players[0].name = namesObj.playerOne;
+    players[1].name = namesObj.playerTwo;
+    
+    game.restart();
+    updateScreen();
+    game.printNewRound();
+
+
+    for (let input of inputs) {
+        input.value = '';   
+    };
+    console.table(namesObj);
+    });
+
     boardDiv.addEventListener('click', clickHandler);
     restartBtn.addEventListener('click', () => {
         game.restart();
         updateScreen();
+        game.printNewRound();
     });
 }
 
