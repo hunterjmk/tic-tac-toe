@@ -52,7 +52,7 @@ const board = (function (){
         const cell = gameBoard[row][column];
 
         if (cell.getValue() === 'X' || cell.getValue() === 'O') {
-            return;
+            throw new Error('Spot already taken');
         } else cell.addToken(player);
     }
 
