@@ -6,7 +6,7 @@ Using an IIFE because I only need the board one!
 */
 
 function Cell() {
-    let value = 0;
+    let value = '';
 
     const addToken = (player) => {
         value = player;
@@ -17,13 +17,15 @@ function Cell() {
     return {addToken, getValue};
 };
 
+// Board
+
 const board = (function (){
 
     const createBoard = () => {
         const rows = 3;
         const columns = rows;
 
-            const createdBoard = [];
+        const createdBoard = [];
 
         for (let i = 0; i < rows; i++){
             createdBoard[i] = [];
@@ -31,7 +33,6 @@ const board = (function (){
                 createdBoard[i].push(Cell());
             }
         }
-        restart = false;
 
         return createdBoard;  
     }
@@ -83,6 +84,8 @@ const game = (function (playerOneName = 'Player One', playerTwoName = 'Player Tw
     let activePlayer = player[0];
     let endGame = false;
 
+    const getActivePlayer = () => activePlayer;
+
     const switchPlayerTurn = () => {
         activePlayer = (activePlayer === player[0]) ? player[1] : player[0];
     };
@@ -107,7 +110,7 @@ const game = (function (playerOneName = 'Player One', playerTwoName = 'Player Tw
             board.printBoard();
 
             const newBoard = board.createBoard();
-            board.setBoard(newBoard);
+            // board.setBoard(newBoard);
 
             endGame = false;
             activePlayer = player[0];
@@ -124,7 +127,7 @@ const game = (function (playerOneName = 'Player One', playerTwoName = 'Player Tw
             const cell2 = boardCheck[1][i].getValue();
             const cell3 = boardCheck[2][i].getValue();
 
-            if (cell1 !== 0 && cell1 === cell2 && cell1 === cell3){
+            if (cell1 !== '' && cell1 === cell2 && cell1 === cell3){
                 console.log(`${activePlayer.name} won! Congratulations`)
                 endGame = true;
             }
@@ -136,7 +139,7 @@ const game = (function (playerOneName = 'Player One', playerTwoName = 'Player Tw
             const cell2 = boardCheck[i][1].getValue();
             const cell3 = boardCheck[i][2].getValue();
 
-            if (cell1 !== 0 && cell1 === cell2 && cell1 === cell3){
+            if (cell1 !== '' && cell1 === cell2 && cell1 === cell3){
                console.log(`${activePlayer.name} won! Congratulations`);
                endGame = true;
             } 
@@ -152,12 +155,12 @@ const game = (function (playerOneName = 'Player One', playerTwoName = 'Player Tw
         ]
         */ 
 
-        if ((boardCheck[0][0].getValue() !== 0) && (boardCheck[0][0].getValue() === boardCheck[1][1].getValue()) && (boardCheck[0][0].getValue() === boardCheck[2][2].getValue())) {
+        if ((boardCheck[0][0].getValue() !== '') && (boardCheck[0][0].getValue() === boardCheck[1][1].getValue()) && (boardCheck[0][0].getValue() === boardCheck[2][2].getValue())) {
             console.log(`${activePlayer.name} won! Congratulations`);
             endGame = true;
         }
 
-        if (boardCheck[0][2].getValue() !== 0 && boardCheck[0][2].getValue() === boardCheck[1][1].getValue() && boardCheck[0][2].getValue() === boardCheck[2][0].getValue()) {
+        if (boardCheck[0][2].getValue() !== '' && boardCheck[0][2].getValue() === boardCheck[1][1].getValue() && boardCheck[0][2].getValue() === boardCheck[2][0].getValue()) {
             console.log(`${activePlayer.name} won! Congratulations`);
             endGame = true;
         }
@@ -184,6 +187,56 @@ const game = (function (playerOneName = 'Player One', playerTwoName = 'Player Tw
 
     return {
         printNewRound,
-        playRound
+        playRound,
+        getActivePlayer
     }
 })();
+
+
+function screenController() {
+    const boardDiv = document.querySelector('.board');
+    const turnDiv = document.querySelector('.turn');
+
+    const updateScreen = () => {
+        boardDiv.textContent = '';
+
+        const gameBoard = board.getboard();
+        const activePlayer = game.getActivePlayer();
+
+        turnDiv.textContent = `It is ${activePlayer.name}'s turn`;
+
+        gameBoard.forEach((row, rowIndex) => {
+            row.forEach((cell, colIndex) => {
+                const cellBtn = document.createElement('button');
+
+                cellBtn.classList.add('cell');
+                cellBtn.textContent = cell.getValue();
+                cellBtn.dataset.row = rowIndex;
+                cellBtn.dataset.column = colIndex;
+
+
+                boardDiv.appendChild(cellBtn);
+            }) 
+        });
+    };
+
+    updateScreen();
+
+
+    const clickHandler = (e) => {
+        const selectedColumn = e.target.dataset.column;
+        const selectedRow = e.target.dataset.row;
+
+        if (!selectedColumn && !selectedRow){
+            return;
+        } else {
+            game.playRound(parseInt(selectedRow), parseInt(selectedColumn));
+            updateScreen();
+        }
+        
+    };
+
+    boardDiv.addEventListener('click', clickHandler);
+}
+
+screenController();
