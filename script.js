@@ -79,7 +79,7 @@ const game = (function (playerOneName = 'Player One', playerTwoName = 'Player Tw
             name: playerTwoName,
             token: 'O'
         }
-    ]
+    ];
 
     let activePlayer = player[0];
     let endGame = false;
@@ -108,13 +108,6 @@ const game = (function (playerOneName = 'Player One', playerTwoName = 'Player Tw
             printNewRound();
         } else if (endGame) {
             board.printBoard();
-
-            const newBoard = board.createBoard();
-            // board.setBoard(newBoard);
-
-            endGame = false;
-            activePlayer = player[0];
-            printNewRound();
         }
     };
 
@@ -184,11 +177,23 @@ const game = (function (playerOneName = 'Player One', playerTwoName = 'Player Tw
         }
     }
 
+    const restart = () => {
+        const newBoard = board.createBoard();
+        board.setBoard(newBoard);
+
+        if (endGame){
+            endGame = false;
+        }
+        activePlayer = player[0];
+        printNewRound();
+    };
+
 
     return {
         printNewRound,
         playRound,
-        getActivePlayer
+        getActivePlayer,
+        restart
     }
 })();
 
@@ -196,6 +201,7 @@ const game = (function (playerOneName = 'Player One', playerTwoName = 'Player Tw
 function screenController() {
     const boardDiv = document.querySelector('.board');
     const turnDiv = document.querySelector('.turn');
+    const restartBtn = document.querySelector('.restart');
 
     const updateScreen = () => {
         boardDiv.textContent = '';
@@ -237,6 +243,10 @@ function screenController() {
     };
 
     boardDiv.addEventListener('click', clickHandler);
+    restartBtn.addEventListener('click', () => {
+        game.restart();
+        updateScreen();
+    });
 }
 
 screenController();
