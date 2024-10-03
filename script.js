@@ -83,8 +83,12 @@ const game = (function (playerOneName = 'Player One', playerTwoName = 'Player Tw
 
     let activePlayer = player[0];
     let endGame = false;
+    let won = false;
+    let tied = false;
 
     const getActivePlayer = () => activePlayer;
+    const getWinStatus = () => won;
+    const getTieStatus = () => tied;
     const getPlayers = () => player;
 
     const switchPlayerTurn = () => {
@@ -124,6 +128,7 @@ const game = (function (playerOneName = 'Player One', playerTwoName = 'Player Tw
             if (cell1 !== '' && cell1 === cell2 && cell1 === cell3){
                 console.log(`${activePlayer.name} won! Congratulations`)
                 endGame = true;
+                won = true;
             }
        }
         // Rows
@@ -136,6 +141,7 @@ const game = (function (playerOneName = 'Player One', playerTwoName = 'Player Tw
             if (cell1 !== '' && cell1 === cell2 && cell1 === cell3){
                console.log(`${activePlayer.name} won! Congratulations`);
                endGame = true;
+               won = true;
             } 
        }
 
@@ -152,11 +158,13 @@ const game = (function (playerOneName = 'Player One', playerTwoName = 'Player Tw
         if ((boardCheck[0][0].getValue() !== '') && (boardCheck[0][0].getValue() === boardCheck[1][1].getValue()) && (boardCheck[0][0].getValue() === boardCheck[2][2].getValue())) {
             console.log(`${activePlayer.name} won! Congratulations`);
             endGame = true;
+            won = true;
         }
 
         if (boardCheck[0][2].getValue() !== '' && boardCheck[0][2].getValue() === boardCheck[1][1].getValue() && boardCheck[0][2].getValue() === boardCheck[2][0].getValue()) {
             console.log(`${activePlayer.name} won! Congratulations`);
             endGame = true;
+            won = true;
         }
 
         // Tie
@@ -172,9 +180,10 @@ const game = (function (playerOneName = 'Player One', playerTwoName = 'Player Tw
             }
         }
 
-        if (numCells === totalCells) {
+        if (numCells === totalCells && !won) {
             console.log(`It's a tie!`);
             endGame = true;
+            tied = true;
         }
     }
 
@@ -184,6 +193,9 @@ const game = (function (playerOneName = 'Player One', playerTwoName = 'Player Tw
 
         if (endGame){
             endGame = false;
+            if (won) {
+                won = false;
+            } else tied = false;
         }
         activePlayer = player[0];
     };
@@ -194,7 +206,9 @@ const game = (function (playerOneName = 'Player One', playerTwoName = 'Player Tw
         playRound,
         getActivePlayer,
         restart,
-        getPlayers
+        getPlayers,
+        getWinStatus,
+        getTieStatus
     }
 })();
 
@@ -209,13 +223,25 @@ function screenController() {
     let namesObj = {};
     let submittedNames = false;
 
+    
+
     const updateScreen = () => {
         boardDiv.textContent = '';
 
         const gameBoard = board.getboard();
         const activePlayer = game.getActivePlayer();
 
-        turnDiv.textContent = `It is ${activePlayer.name}'s turn`;
+        let won = game.getWinStatus();
+        let tied = game.getTieStatus();
+        if (won){
+            console.log(won);
+            turnDiv.textContent = `${activePlayer.name} won! Congratulations`;
+        } else if (tied){
+            turnDiv.textContent = `It's a tie!`;
+        } else if (!won && !tied){
+            turnDiv.textContent = `It is ${activePlayer.name}'s turn`;
+        }
+
 
         gameBoard.forEach((row, rowIndex) => {
             row.forEach((cell, colIndex) => {
