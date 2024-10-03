@@ -101,4 +101,8 @@ input {
         border-radius: 10px;
         
     }
+
+    .cell {
+        font-size: 5rem;
+    }
 }
